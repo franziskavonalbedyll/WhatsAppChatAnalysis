@@ -8,13 +8,11 @@ import collections
 import itertools
 import re
 
-from scipy.interpolate import make_interp_spline
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
 
-# mostused words
 def compute_word_usage_frequency(message_column: pd.core.series.Series) -> collections.Counter:
     """
     This function computes how often each word occured in the given dataframe column.
@@ -84,10 +82,16 @@ def main():
         f"{messenger_1} vs {messenger_2}": average_messages_per_day[messenger_1] / average_messages_per_day[messenger_2]
         for messenger_1, messenger_2 in itertools.combinations(messengers, 2)}
 
+    # save averages to df
+    df_averages = pd.DataFrame(
+        [average_response_times, average_message_length, average_messages_per_day],
+        index=["Average Response Time", "Average Message Length", "Average amount of messages per day"])
+    df_averages.to_csv(r"out/results.csv")
+
     word_usage_frequency = {messenger: compute_word_usage_frequency(df[df["messenger"] == messenger]["message"]) for
                             messenger in messengers}
 
-    ## Plots
+    # Plots
     if plot:
         # Plot messages over the day
         times_counted = pd.DataFrame(
@@ -97,20 +101,20 @@ def main():
         abs_messages_per_hour_plt = times_counted.plot()
         abs_messages_per_hour_plt.set(xticks=np.arange(0, 25, 2), xlabel="Time rounded to the nearest hour",
                                       ylabel="Amount of messages sent")
-        plt.show()
+        abs_messages_per_hour_plt.figure.savefig(r"out/abs_messages_per_hour_plt.png")
 
         avg_messages_per_hour = times_counted / len(set(df["date"]))
-        avg_message_per_hour_plt = avg_messages_per_hour.plot()
-        avg_message_per_hour_plt.set(xticks=np.arange(0, 25, 2), xlabel="Time rounded to the nearest hour",
+        avg_messages_per_hour_plt = avg_messages_per_hour.plot()
+        avg_messages_per_hour_plt.set(xticks=np.arange(0, 25, 2), xlabel="Time rounded to the nearest hour",
                                      ylabel="Average amount of messages sent")
-        plt.show()
+        avg_messages_per_hour_plt.figure.savefig(r"out/avg_messages_per_hour_plt.png")
 
-        ## Plot messages over the year
+        # Plot messages over the year
         days_counted = pd.DataFrame(
             {messenger: df[df["messenger"] == messenger]["datetime"].dt.date.value_counts() for messenger in
              messengers})
-        g = pd.DataFrame(days_counted).plot()
-        plt.show()
+        abs_messages_over_the_year_plt = pd.DataFrame(days_counted).plot()
+        abs_messages_over_the_year_plt.figure.savefig(r"out/abs_messages_over_the_year_plt.png")
 
 
 if __name__ == "__main__":

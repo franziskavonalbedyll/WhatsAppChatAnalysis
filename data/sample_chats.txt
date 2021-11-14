@@ -1,0 +1,5 @@
+[06.01.20, 18:01:35] User 1: Hey you!
+[06.01.20, 18:01:35] User 2: Hola
+[06.01.20, 18:02:00] User 2: How are you my friend?
+[06.01.20, 18:02:10] User 1: Good, hwbu
+[06.01.20, 18:02:21] User 2: Me too :)
